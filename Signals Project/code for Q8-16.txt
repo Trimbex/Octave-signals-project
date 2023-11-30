@@ -1,0 +1,49 @@
+% Design a Butterworth low-pass filter
+filter_order = 20;
+cutoff_frequency = 300; % Set an appropriate cutoff frequency in Hz
+
+[b, a] = butter(filter_order, cutoff_frequency / (fs/2), 'low');
+
+% Apply the filter to the combined signal
+filtered_signal = filter(b, a, combined_signal);
+
+y1 = filtered_signal;
+% Save the filtered signal to a .wav file
+audiowrite('butterworth (Q11).wav', y1, fs);
+
+% freqz(b, a, fs, fs); % MAGNITUDE + PHASE REPONSES GRAPHS
+
+% Time vector
+t = (0:length(y1)-1) / fs;
+
+% Plot the signal against time
+plot(t, y1);
+xlabel('Time (seconds)');
+ylabel('Amplitude');
+title('Filtered Signal vs Time');
+grid on;
+
+% energy
+
+energy_y1 = sum(abs(y1).^2);
+
+fprintf('Energy of the signal y1: %f\n', energy_y1);
+
+% Compute the frequency spectrum of y1
+fft_y1 = fftshift(fft(y1));
+fft_mag_y1 = abs(fft_y1);
+
+% Frequency axis
+frequencies = linspace(-fs/2, fs/2, length(fft_y1));
+
+% Plot the magnitude spectrum
+plot(frequencies, fft_mag_y1);
+xlabel('Frequency (Hz)');
+ylabel('Magnitude');
+title('Magnitude Spectrum of y1');
+grid on;
+
+
+% Compute the energy of the signal y1 in the frequency domain
+energy_frequency_domain = (1/length(y1)) * sum(abs(fft(y1)).^2);
+fprintf('Energy in Frequency Domain: %f\n', energy_frequency_domain);
